@@ -1,8 +1,25 @@
-# Mini Task API
+# Task API
 
 A simple CRUD API built with FastAPI.
 
-## Swagger UI
+The API allows users to create, view, update, and delete tasks. It also includes a health-check endpoint and automatically generated Swagger documentation.
 
-![Swagger UI](screenshots/swagger-ui.png) 
+## Features
+
+- Create a task
+- List all tasks
+- Get one task by ID
+- Update a task
+- Delete a task
+- Input validation
+- Proper HTTP status codes
+- Swagger UI documentation
+
+## Installation and Running
+
+Install the required packages:
+
+```bash
+pip install fastapi uvicorn
+
 
