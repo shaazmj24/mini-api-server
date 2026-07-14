@@ -1,5 +1,5 @@
 from fastapi import FastAPI 
-from fastapi.responses import JSONResponse 
+from fastapi.responses import JSONResponse , Response
 from pydantic import BaseModel 
 
 tasks = [
@@ -10,8 +10,13 @@ tasks = [
 
 app = FastAPI()  
 
-class newTask(BaseModel):  
+class newTask(BaseModel):                 #data validation and serialization
     title : str | None = None 
+
+class UpdateTask(BaseModel):
+    title: str | None = None
+    done: bool | None = None
+
 
 @app.get("/") 
 def root():  
@@ -49,7 +54,7 @@ def add_new_task(new_task : newTask):
                         content={"bad request" : "Title cannot be empty"}  
                         )  
         
-    new_task = {"id" : tasks[-1]["id"] + 1 , "title" : new_task.title, "done" : False} 
+    new_task = {"id" : max((task["id"] for task in tasks), default=0) + 1 , "title" : new_task.title, "done" : False} 
     tasks.append(new_task)  
     
     return JSONResponse(
@@ -57,7 +62,50 @@ def add_new_task(new_task : newTask):
         content=new_task 
     )
     
+@app.put("/tasks/{id}") 
+def replace_task(id : int, update: UpdateTask):    
+    if update.title is None and update.done is None: 
+        return JSONResponse(
+            status_code=400,
+            content={"error": "Provide title or done"}
+        ) 
+    
+    if update.title is not None and update.title.strip() == "": 
+        return JSONResponse(
+            status_code=400,
+            content={"error": "Title cannot be empty"}
+        ) 
+    task = None 
+    for t in tasks: 
+        if t["id"] == id:  
+            task = t 
+            break 
+    
+    if task is None:   
+        return JSONResponse( 
+                    status_code=404, 
+                    content={"error": f"Task {id} not found"}   
+                    )  
+    if update.title is not None: 
+        task["title"] = update.title 
+    if update.done is not None: 
+        task["done"] = update.done 
+    
+    return task 
     
 
+@app.delete("/tasks/{id}") 
+def delete_task(id : int):    
+    task = None 
+    for t in tasks: 
+        if t["id"] == id:  
+            tasks.remove(t) 
+            return Response(status_code=204) 
+    
+    return JSONResponse(  
+                status_code=404,  
+                content={"error": f"Task {id} not found"}   
+                )  
 
+    
 
