@@ -1,0 +1,8 @@
+# Mini Task API
+
+A simple CRUD API built with FastAPI.
+
+## Swagger UI
+
+![Swagger UI](screenshots/swagger-ui.png) 
+
