@@ -1,13 +1,17 @@
 from fastapi import FastAPI 
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse 
+from pydantic import BaseModel 
 
 tasks = [
-    {"id": 1, "title": "Practice leetcode", "Done" : True}, 
-    {"id": 2, "title": "Uni Registration", "Done" : False}, 
-    {"id": 3, "title": "Grocery", "Done" : True}
+    {"id": 1, "title": "Practice leetcode", "done" : True}, 
+    {"id": 2, "title": "Uni Registration", "done" : False}, 
+    {"id": 3, "title": "Grocery", "done" : True}
     ]
 
-app = FastAPI() 
+app = FastAPI()  
+
+class newTask(BaseModel):  
+    title : str | None = None 
 
 @app.get("/") 
 def root():  
@@ -36,4 +40,24 @@ def get_task(id : int):
         status_code=404, 
         content={"error" : f"Task {id} not found"}
     )
+
+@app.post("/tasks") 
+def add_new_task(new_task : newTask): 
+    if new_task.title is None or new_task.title.strip() == "":   
+        return JSONResponse( 
+                        status_code=400,  
+                        content={"bad request" : "Title cannot be empty"}  
+                        )  
+        
+    new_task = {"id" : tasks[-1]["id"] + 1 , "title" : new_task.title, "done" : False} 
+    tasks.append(new_task)  
+    
+    return JSONResponse(
+        status_code= 201, 
+        content=new_task 
+    )
+    
+    
+
+
 
