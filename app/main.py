@@ -2,11 +2,16 @@ from fastapi import FastAPI, HTTPException, Response, status
 
 from app.models import NewTask, Task, UpdateTask
 from app.repository.inmemory import InMemoryTaskRepository
-from app.service import TaskService
+from app.service import TaskService  
+from app.database1 import initialize_database
 
 app = FastAPI()   
+initialize_database()
 repository = InMemoryTaskRepository()
-service = TaskService(repository)
+service = TaskService(repository) 
+
+
+
 
 @app.get("/") 
 def root():  
