@@ -63,12 +63,44 @@ class SQLiteTaskRepository(TaskRepository):
             conn.close()
         
     
-    def replace_task(self, id : int , update : UpdateTask) -> Task:    
-        pass 
+    def replace_task(self, id : int , update : UpdateTask) -> Task:   
+        conn = get_connection()   
+        try: 
+            cursor = conn.execute("""  
+                            UPDATE tasks 
+                            SET title = ?, done = ? 
+                            WHERE id = ?
+                                  """,  
+                            (update.title, int(update.done), id,), ) 
+            if cursor.rowcount == 0: 
+                raise LookupError("ID not found")  
+            conn.commit() 
+            
+            return Task( 
+                        id=id, 
+                        title=update.title, 
+                        done=update.done, 
+                        )
+        finally: 
+            conn.close()
         
             
-    def delete_task(self, id : int):  
-        pass 
+    def delete_task(self, id : int):   
+        conn = get_connection()   
+        try:  
+            cursor = conn.execute( 
+                        """ 
+                        DELETE FROM tasks 
+                        WHERE id = ? 
+                        """, (id,),) 
+            if cursor.rowcount == 0: 
+                raise LookupError("ID not found") 
+            conn.commit() 
+        finally:  
+            conn.close() 
+            
+            
+            
     
     
     
