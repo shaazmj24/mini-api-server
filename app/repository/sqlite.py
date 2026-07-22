@@ -41,11 +41,26 @@ class SQLiteTaskRepository(TaskRepository):
         finally: 
             conn.close() 
             
-            
-            
 
     def add_task(self, newtask: NewTask) -> Task:   
-        pass 
+        conn = get_connection() 
+        try: 
+            cursor = conn.execute( 
+                        """  
+                        INSERT INTO tasks (title, done) 
+                        VALUES (?, ?) 
+                        """, 
+                        (newtask.title, int(newtask.done)), 
+                        ) 
+            conn.commit() 
+            
+            return Task( 
+                    id=cursor.lastrowid, 
+                    title=newtask.title, 
+                    done=newtask.done, 
+                    ) 
+        finally: 
+            conn.close()
         
     
     def replace_task(self, id : int , update : UpdateTask) -> Task:    
