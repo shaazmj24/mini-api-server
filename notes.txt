@@ -1,0 +1,25 @@
+1. 
+3-Layer Architecture:
+Split app into 3 parts, each with one job → change one without breaking others 
+
+Presentation Layer: Takes the incoming request and sends back the response — nothing more.
+What happens after: It passes the request straight to the Service layer and waits for an answer.
+Service Layer: Contains the actual logic — validates input, applies rules, makes decisions.
+Then: Based on what the request needs, the service picks the right repository to talk to (e.g., a UserRepository for user data, an OrderRepository for orders).
+Repository Layer: Each repository follows an interface — a contract that says "you must implement these methods" (like get(), save(), delete()). Whatever database it uses underneath, it must expose 
+these same methods. This repository is the only thing that actually touches the database.
+
+Because the service only talks to the interface, not a specific database, you can swap PostgresUserRepository for MongoUserRepository without changing the service at all — as long as it implements the same methods.
+
+Simple Benefits:
+
+Swap databases without touching business logic
+Test logic without needing a real database
+Add new features/clients easily — only one layer changes
+Easier to find bugs (know exactly which layer to check)
+Teams can work on different layers at the same time
+
+
+
+
+2. 

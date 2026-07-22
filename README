@@ -142,3 +142,18 @@ mini-api-server/
 ```
 
 ---
+
+------------------------------------------------------------------------------------------------
+
+A2
+
+
+SQLite Database
+
+This project uses SQLite because it is lightweight, requires no setup, and comes built into Python. The database file (tasks.db) is automatically created in the project root when the application starts. Run the project with:
+
+uvicorn app.main:app --reload
+
+You can view the database using DB Browser for SQLite.
+
+
